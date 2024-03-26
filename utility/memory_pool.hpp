@@ -5,35 +5,16 @@
 #include <iostream>
 #include <vector>
 #include <memory>
-namespace OrangeKV
-{
-    class MemoryPool
-    {
+namespace OrangeKV {
+    class MemoryPool {
     public:
-        MemoryPool(size_t size) : size_(size)
-        {
-            pool_ = std::make_unique<char[]>(size_);
-        }
-        ~MemoryPool() = default;
-        void *Allocate(size_t size)
-        {
-            if (size > size_)
-            {
-                return nullptr;
-            }
-            if (size_ - offset_ < size)
-            {
-                return nullptr;
-            }
-            void *ptr = pool_.get() + offset_;
-            offset_ += size;
-            return ptr;
-        }
-        void Free(void *ptr)
-        {
-            // Do nothing
-        }
-    }
+        MemoryPool();
+        MemoryPool(const MemoryPool&) = delete;
+        MemoryPool& operator=(const MemoryPool&) = delete;
+        ~MemoryPool();
+    private:
+        char* allocate(size_t bytes)
+    };
 }
 // Define your memory pool class here
 

@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "atomic": "cpp",
+        "charconv": "cpp",
+        "cstdint": "cpp"
+    }
+}
