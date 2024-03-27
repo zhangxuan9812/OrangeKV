@@ -1,0 +1,3 @@
+/Users/xuanzhang/Work/OrangeKV/cmake-build-debug/CMakeFiles/OrangeKV.dir
+/Users/xuanzhang/Work/OrangeKV/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/xuanzhang/Work/OrangeKV/cmake-build-debug/CMakeFiles/rebuild_cache.dir

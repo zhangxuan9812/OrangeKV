@@ -13,7 +13,7 @@ namespace OrangeKV {
         MemoryPool& operator=(const MemoryPool&) = delete;
         ~MemoryPool();
     private:
-        char* allocate(size_t bytes)
+        char* allocate(size_t bytes);
     };
 }
 // Define your memory pool class here
