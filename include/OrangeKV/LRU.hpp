@@ -81,7 +81,9 @@ template<typename KeyType, typename ValueType, typename LockType>
 Handle* LRUCache<KeyType, ValueType, LockType>::insert(const KeyType& key, uint32_t hash, ValueType* value, size_t charge, void (*deleter)(const KeyType& key, ValueType* value)) {
     std::lock_guard<LockType> lock(locker);
     // Create a new node
-    auto newNode = new LRUNode<KeyType, ValueType>();
+    size_t nodeSize = sizeof(LRUNode<KeyType, ValueType>) + key.length() - 1;
+    LRUNode<KeyType, ValueType>* newNode = reinterpret_cast<LRUNode<KeyType, ValueType>*>(malloc(nodeSize));
+    //auto newNode = new LRUNode<KeyType, ValueType>();
     newNode->deleter = deleter;
     newNode->key = new KeyType(key);
     newNode->value = value;

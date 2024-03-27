@@ -68,3 +68,75 @@ private:
 
 
  //ORANGEKV_LRU_HPP
+
+
+
+ #include <cstdint>
+#include <cstddef>
+#include <list>
+#include <mutex>
+#include <string>
+#include <unordered_map>
+#include <memory> 
+#include "utility/hash.hpp"
+
+
+//The type of node
+#include <cstdint>
+#include <cstddef>
+#include <list>
+#include <mutex>
+#include <string>
+#include <unordered_map>
+#include <memory> 
+#include "utility/hash.hpp"
+
+template<typename KeyType, typename ValueType>
+struct LFUNode {
+    void (*deleter)(const KeyType& key, ValueType* value);
+    KeyType* key;
+    ValueType* value;
+    size_t charge;
+    size_t keyLength;
+    bool inCache;
+    uint32_t hash;
+    uint32_t refs;
+    uint32_t frequency; // The frequency of the node
+    char keyData[1];
+};
+
+struct Handle{};
+
+
+template<typename KeyType, typename ValueType, typename LockType>
+class LFUCache {
+private:
+    size_t capacity_; // The maximum capacity of the cache
+    size_t usage_; // The total charge of the cache
+    std::unordered_map<uint32_t, typename std::list<LFUNode<KeyType, ValueType>*>::iterator> frequencyList; 
+    std::unordered_map<KeyType, typename std::list<LFUNode<KeyType, ValueType>*>::iterator, OrangeKV::HashBKDR> lfuMap; 
+    LockType locker; // The locker for thread safety
+public:
+    LFUCache(); // Constructor
+    ~LFUCache(); // Destructor
+    Handle* insert(const KeyType& key, uint32_t hash, ValueType* value, size_t charge, void (*deleter)(const KeyType& key, ValueType* value)); 
+    Handle* lookUp(const KeyType& key, uint32_t hash); 
+    void release(Handle* handle); 
+    void erase(const KeyType& key, uint32_t hash); 
+    void prune(); // Prune the cache
+    void setCapacity(size_t capacity) { // Set the maximum capacity of the cache
+        capacity_ = capacity;
+    }
+    size_t capacity() const { // Get the maximum capacity of the cache
+        return capacity_;
+    }
+    size_t totalCharge() const { // Get the total charge of the cache
+        return usage_;
+    }
+private:
+    void lfuRemove(std::list<LFUNode<KeyType, ValueType>*>& list, LFUNode<KeyType, ValueType>* node); 
+    void lfuAppend(std::list<LFUNode<KeyType, ValueType>*>& list, LFUNode<KeyType, ValueType>* node); 
+    void ref(LFUNode<KeyType, ValueType>* node); 
+    void unref(LFUNode<KeyType, ValueType>* node);
+    bool finishErase(LFUNode<KeyType, ValueType>* node); 
+};
